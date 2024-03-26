@@ -26,7 +26,7 @@ func setup_window():
 	window_node.get_node("%OpenWebsiteButton").connect("pressed", _on_open_website_button_pressed)
 	window_node.get_node("%SelectAllButton").connect("pressed", _on_select_all_button_pressed)
 	window_node.get_node("%DeselectAllButton").connect("pressed", _on_deselect_all_button_pressed)
-	window_node.get_node("%FileTree").item_mouse_selected.connect(_on_tree_item_mouse_selected)
+	window_node.get_node("%FileTree").connect("item_mouse_selected", _on_tree_item_mouse_selected)
 	window_node.get_node("%FileTypeLineEdit").connect("text_changed", _on_file_type_line_edit_text_changed)
 	window_node.get_node("%FileTypeLineEdit").connect("text_submitted", _on_text_submitted)
 	window_node.get_node("%FileTypeLineEdit").connect("focus_exited", _on_search_for_files)
@@ -62,8 +62,6 @@ func load_settings():
 		window_node.get_node("%ExcludeLineEdit").text = config.get_value("Settings", "excluded_directories", "")
 		window_node.get_node("%WebsiteLineEdit").text = config.get_value("Settings", "website_url", "")
 		selected_files = config.get_value("Settings", "selected_files", {})
-	else:
-		print("Failed to load settings.")
 
 func generate_file_list(file_tree, path):
 	if FileAccess.file_exists(path + "/.gdignore"):
@@ -104,6 +102,7 @@ func _on_search_for_files():
 	file_tree.clear()
 	total_file_size = 0
 	update_file_size_label()
+	file_tree.create_item() # invisible root node
 	generate_file_list(file_tree, "res://")
 	update_selected_files(file_tree.get_root())
 
